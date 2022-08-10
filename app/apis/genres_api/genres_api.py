@@ -1,7 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 
-from app.dao.models import Genre
-from app.dao.dao import DAO
+from app.dao.dao import GenreDAO
 from app.apis.genres_api.parser import genre_parser
 
 api = Namespace('genres')
@@ -17,13 +16,13 @@ genre = api.model('Genre', {
 class GenresView(Resource):
     @api.marshal_list_with(genre)
     def get(self):
-        return DAO().get_items(Genre)
+        return GenreDAO().get_items()
 
     @api.expect(genre_parser, validate=True)
     @api.marshal_with(genre, code=201)
     def post(self):
         data = genre_parser.parse_args()
-        return DAO().create_item(Genre, data)
+        return GenreDAO().create_item(data)
 
 
 @api.route('/<int:id>')
@@ -31,7 +30,7 @@ class GenreView(Resource):
     @api.marshal_with(genre)
     @api.response(code=404, description='Item not found')
     def get(self, id):
-        if result := DAO().get_item(Genre, id):
+        if result := GenreDAO().get_item(id):
             return result, 200
         return '',404
 
@@ -39,10 +38,10 @@ class GenreView(Resource):
     @api.response(code=204, description="Successfully modified")
     def put(self, id):
         data = genre_parser.parse_args()
-        return DAO().update_item(Genre, id, data), 204
+        return GenreDAO().update_item(id, data), 204
 
     @api.response(code=204, description="Successfully deleted")
     def delete(self, id):
-        return DAO().delete_item(Genre, id), 204
+        return GenreDAO().delete_item(id), 204
 
 

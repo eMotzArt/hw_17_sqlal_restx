@@ -1,36 +1,46 @@
 from app.database.database import db
-from app.dao.models import Movie
+from app.dao.models import Movie, Genre, Director
 
-class DAO():
-    def get_items(self, model):
-        return model.query.all()
+class BaseDAO():
+    model: db.Model
+    def get_items(self):
+        return self.model.query.all()
 
-    def get_item(self, model, id):
-        return model.query.get(id)
+    def get_item(self, id):
+        return self.model.query.get(id)
 
-    def create_item(self, model, data):
-        new_item = model(**data)
+    def create_item(self, data):
+        new_item = self.model(**data)
         db.session.add(new_item)
         db.session.commit()
         return new_item
 
-    def update_item(self, model, id, data):
-        model.query.filter_by(id=id).update(data)
+    def update_item(self, id, data):
+        self.model.query.filter_by(id=id).update(data)
         db.session.commit()
         return
 
-    def delete_item(self, model, id):
-        model.query.filter_by(id=id).delete()
+    def delete_item(self, id):
+        self.model.query.filter_by(id=id).delete()
         db.session.commit()
         return
 
-class MovieDAO(DAO):
+class MovieDAO(BaseDAO):
+    model = Movie
     def get_items(self, data=None):
         if not data:
-            return Movie.query.all()
+            return self.model.query.all()
 
-        query = Movie.query
+        query = self.model.query
         for filter_ in data:
             if value := data.get(filter_):
-                query = query.filter(getattr(Movie, filter_) == value)
+                query = query.filter(getattr(self.model, filter_) == value)
         return query.all()
+
+class GenreDAO(BaseDAO):
+    model = Genre
+    pass
+
+class DirectorDAO(BaseDAO):
+    model = Director
+    pass

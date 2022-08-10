@@ -1,7 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 
-from app.dao.models import Genre, Director, Movie
-from app.dao.dao import DAO
+from app.dao.dao import DirectorDAO
 from app.apis.directors_api.parser import director_parser
 
 api = Namespace('directors')
@@ -17,13 +16,13 @@ director = api.model('Director', {
 class DirectorsView(Resource):
     @api.marshal_list_with(director)
     def get(self):
-        return DAO().get_items(Director)
+        return DirectorDAO().get_items()
 
     @api.expect(director_parser)
     @api.marshal_with(director, code=201)
     def post(self):
         data = director_parser.parse_args()
-        return DAO().create_item(Director, data)
+        return DirectorDAO().create_item(data)
 
 
 @api.route('/<int:id>')
@@ -31,7 +30,7 @@ class DirectorView(Resource):
     @api.marshal_with(director)
     @api.response(code=404, description='Item not found')
     def get(self, id):
-        if result := DAO().get_item(Director, id):
+        if result := DirectorDAO().get_item(id):
             return result, 200
         return '', 404
 
@@ -39,10 +38,10 @@ class DirectorView(Resource):
     @api.response(code=204, description="Successfully modified")
     def put(self, id):
         data = director_parser.parse_args()
-        return DAO().update_item(Director,id,data), 201
+        return DirectorDAO().update_item(id, data), 201
 
     @api.response(code=204, description="Successfully deleted")
     def delete(self, id):
-        return DAO().delete_item(Director, id), 204
+        return DirectorDAO().delete_item(id), 204
 
 

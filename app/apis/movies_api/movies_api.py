@@ -1,7 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 
-from app.dao.models import Movie
-from app.dao.dao import DAO, MovieDAO
+from app.dao.dao import MovieDAO
 from app.apis.movies_api.parser import movie_parser, movie_query_parser
 
 api = Namespace('movies')
@@ -31,7 +30,7 @@ class MoviesView(Resource):
     @api.marshal_with(movie, code=201)
     def post(self):
         data = movie_parser.parse_args()
-        return DAO().create_item(Movie, data)
+        return MovieDAO().create_item(data)
 
 
 @api.route('/<int:id>')
@@ -39,7 +38,7 @@ class DirectorView(Resource):
     @api.marshal_with(movie)
     @api.response(code=404, description='Item not found')
     def get(self, id):
-        if result := DAO().get_item(Movie, id):
+        if result := MovieDAO().get_item(id):
             return result, 200
         return '',404
 
@@ -47,10 +46,10 @@ class DirectorView(Resource):
     @api.response(code=204, description="Successfully modified")
     def put(self, id):
         data = movie_parser.parse_args()
-        return DAO().update_item(Movie,id,data), 201
+        return MovieDAO().update_item(id, data), 201
 
     @api.response(code=204, description="Successfully deleted")
     def delete(self, id):
-        return DAO().delete_item(Movie, id), 204
+        return MovieDAO().delete_item(id), 204
 
 
