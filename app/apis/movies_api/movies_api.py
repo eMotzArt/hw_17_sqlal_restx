@@ -33,23 +33,23 @@ class MoviesView(Resource):
         return MovieDAO().create_item(data)
 
 
-@api.route('/<int:id>')
-class DirectorView(Resource):
+@api.route('/<int:pk>')
+class MovieView(Resource):
     @api.marshal_with(movie)
     @api.response(code=404, description='Item not found')
-    def get(self, id):
-        if result := MovieDAO().get_item(id):
+    def get(self, pk):
+        if result := MovieDAO().get_item(pk):
             return result, 200
         return '',404
 
     @api.expect(movie_parser)
     @api.response(code=204, description="Successfully modified")
-    def put(self, id):
+    def put(self, pk):
         data = movie_parser.parse_args()
-        return MovieDAO().update_item(id, data), 201
+        return MovieDAO().update_item(pk, data), 201
 
     @api.response(code=204, description="Successfully deleted")
-    def delete(self, id):
-        return MovieDAO().delete_item(id), 204
+    def delete(self, pk):
+        return MovieDAO().delete_item(pk), 204
 
 

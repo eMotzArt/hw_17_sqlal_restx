@@ -6,8 +6,8 @@ class BaseDAO():
     def get_items(self):
         return self.model.query.all()
 
-    def get_item(self, id):
-        return self.model.query.get(id)
+    def get_item(self, pk):
+        return self.model.query.get(pk)
 
     def create_item(self, data):
         new_item = self.model(**data)
@@ -15,13 +15,13 @@ class BaseDAO():
         db.session.commit()
         return new_item
 
-    def update_item(self, id, data):
-        self.model.query.filter_by(id=id).update(data)
+    def update_item(self, pk, data):
+        self.model.query.filter_by(id=pk).update(data)
         db.session.commit()
         return
 
-    def delete_item(self, id):
-        self.model.query.filter_by(id=id).delete()
+    def delete_item(self, pk):
+        self.model.query.filter_by(id=pk).delete()
         db.session.commit()
         return
 

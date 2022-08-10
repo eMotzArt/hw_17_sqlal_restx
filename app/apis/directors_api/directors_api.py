@@ -7,7 +7,7 @@ api = Namespace('directors')
 
 # api model
 director = api.model('Director', {
-    'id': fields.Integer(readonly=True, description='Director unique identifier'),
+    'id': fields.Integer(readonly=True, description='Director unique pkentifier'),
     'name': fields.String(required=True, description='The director name')
 })
 
@@ -25,23 +25,23 @@ class DirectorsView(Resource):
         return DirectorDAO().create_item(data)
 
 
-@api.route('/<int:id>')
+@api.route('/<int:pk>')
 class DirectorView(Resource):
     @api.marshal_with(director)
     @api.response(code=404, description='Item not found')
-    def get(self, id):
-        if result := DirectorDAO().get_item(id):
+    def get(self, pk):
+        if result := DirectorDAO().get_item(pk):
             return result, 200
         return '', 404
 
     @api.expect(director_parser)
     @api.response(code=204, description="Successfully modified")
-    def put(self, id):
+    def put(self, pk):
         data = director_parser.parse_args()
-        return DirectorDAO().update_item(id, data), 201
+        return DirectorDAO().update_item(pk, data), 201
 
     @api.response(code=204, description="Successfully deleted")
-    def delete(self, id):
-        return DirectorDAO().delete_item(id), 204
+    def delete(self, pk):
+        return DirectorDAO().delete_item(pk), 204
 
 
