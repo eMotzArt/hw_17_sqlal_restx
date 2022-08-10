@@ -1,5 +1,5 @@
 from app.database.database import db
-
+from app.dao.models import Movie
 
 class DAO():
     def get_items(self, model):
@@ -23,3 +23,14 @@ class DAO():
         model.query.filter_by(id=id).delete()
         db.session.commit()
         return
+
+class MovieDAO(DAO):
+    def get_items(self, data=None):
+        if not data:
+            return Movie.query.all()
+
+        query = Movie.query
+        for filter_ in data:
+            if value := data.get(filter_):
+                query = query.filter(getattr(Movie, filter_) == value)
+        return query.all()

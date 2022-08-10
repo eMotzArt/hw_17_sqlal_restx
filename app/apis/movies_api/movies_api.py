@@ -1,8 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 
 from app.dao.models import Movie
-from app.dao.dao import DAO
-from app.apis.movies_api.parser import movie_parser
+from app.dao.dao import DAO, MovieDAO
+from app.apis.movies_api.parser import movie_parser, movie_query_parser
 
 api = Namespace('movies')
 
@@ -21,9 +21,11 @@ movie = api.model('Movie', {
 
 @api.route('/')
 class MoviesView(Resource):
+    @api.expect(movie_query_parser)
     @api.marshal_list_with(movie)
     def get(self):
-        return DAO().get_items(Movie)
+        data = movie_query_parser.parse_args()
+        return MovieDAO().get_items(data)
 
     @api.expect(movie_parser)
     @api.marshal_with(movie, code=201)
