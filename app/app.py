@@ -15,5 +15,3 @@ def create_app(config: Config) -> Flask:
 def configute_app(app: Flask):
     api.init_app(app)
     db.init_app(app)
-    if not(os.path.isfile('app/database/test.db')):
-        make_bd()

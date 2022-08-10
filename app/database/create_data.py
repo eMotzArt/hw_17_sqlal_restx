@@ -269,4 +269,4 @@ def make_bd():
         with db.session.begin():
             db.session.add(d)
 
-# make_bd()
+make_bd()
